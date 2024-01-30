@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Central\DashboardController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TenantController;
-use App\Models\Tenant;
+use App\Http\Controllers\Central\TenantController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,13 +27,12 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard', [
-        'tenants' => Tenant::all()
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['verified'])->name('central.dashboard.index');
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -42,8 +41,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
-    Route::post('/tenant', [TenantController::class, 'tenant'])->name('create.tenant');
-    Route::delete('/delete/{id}', [TenantController::class, 'delete'])->name('delete.tenant');
+    Route::prefix('tenants')->group(function(){
+
+        Route::post('store', [TenantController::class, 'store'])->name('tenant.store');
+        Route::get('records', [TenantController::class, 'records']);
+        Route::delete('{id}', [TenantController::class, 'delete'])->name('tenant.delete');
+
+    });
 
 });
 

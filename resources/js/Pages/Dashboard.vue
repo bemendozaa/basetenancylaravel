@@ -5,17 +5,23 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { Link, useForm, usePage, router  } from '@inertiajs/vue3';
+import { reactive, ref } from 'vue';
 
-defineProps({
-    tenants: {
-        type: Array,
-    },
-});
+import { useGeneralFunction } from '@/composables/main/useGeneralFunction';
+// import { useTenants } from '@/composables/main/tenant/tenants';
+import { useTenants } from '../composables/tenant/tenants';
 
-const form = useForm({
-    subdomain: null,
-});
+const { showNProgress, hideNProgress } = useGeneralFunction()
+const { getRecords, records, store, deleteTenant } = useTenants()
+
+
+const form = reactive({
+    subdomain: '',
+})
+
+
+getRecords()
 
 </script>
 
@@ -32,76 +38,52 @@ const form = useForm({
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         You're logged in!
-                        
 
-                        <form @submit.prevent="form.post(route('create.tenant'))" class="mt-6 space-y-6">
-                            <div>
-                                <InputLabel for="subdomain" value="Subdominio" />
+                        <div>
+                            <InputLabel for="subdomain" value="Subdominio" />
 
-                                <TextInput
-                                    id="subdomain"
-                                    type="text"
-                                    class="mt-1 block w-full"
-                                    v-model="form.subdomain"
-                                    required
-                                    autofocus
-                                    autocomplete="subdomain"
-                                />
+                            <TextInput
+                                id="subdomain"
+                                type="text"
+                                class="mt-1 block w-full"
+                                v-model="form.subdomain"
+                                required
+                                autofocus
+                                autocomplete="subdomain"
+                            />
 
-                                <InputError class="mt-2" :message="form.errors.subdomain" />
-                            </div>
+                            <!-- <InputError class="mt-2" :message="form.errors.subdomain" /> -->
+                        </div>
 
-                            <div class="flex items-center gap-4">
-                                <PrimaryButton :disabled="form.processing">Guardar</PrimaryButton>
-
-                                <Transition
-                                    enter-active-class="transition ease-in-out"
-                                    enter-from-class="opacity-0"
-                                    leave-active-class="transition ease-in-out"
-                                    leave-to-class="opacity-0"
-                                >
-                                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
-                                </Transition>
-                            </div>
-                        </form>
+                        <div class="flex items-center gap-4 mt-3">
+                            <PrimaryButton :disabled="form.processing" @click.prevent="store(form)">Registrar</PrimaryButton>
+                        </div>
 
                         <br>
                         <hr>
                         <br>
 
-                        <table class="table-auto">
+                        <table class="border-collapse border border-slate-400" style="width: 100%;">
                             <thead>
                                 <tr>
-                                    <th>id</th>
-                                    <th>name</th>
-                                    <th></th>
+                                    <th class="border border-slate-300 py-2">id</th>
+                                    <th class="border border-slate-300 py-2">name</th>
+                                    <th class="border border-slate-300 py-2"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="row in tenants">
-                                    <td>
+                                <tr v-for="row in records">
+                                    <td class="border border-slate-300 px-3">
                                         {{ row.id }}
                                     </td>
-                                    <td>
+                                    <td class="border border-slate-300 px-3">
                                         {{  row.tenancy_db_name }}
                                     </td>
-                                    <td>
+                                    <td class="border border-slate-300 px-4 py-2">
                                         
-                                        <form @submit.prevent="form.delete(route('delete.tenant'), row.id)" class="mt-6 space-y-6">
-
-                                            <div class="flex items-center gap-4">
-                                                <PrimaryButton :disabled="form.processing">Eliminar</PrimaryButton>
-
-                                                <Transition
-                                                    enter-active-class="transition ease-in-out"
-                                                    enter-from-class="opacity-0"
-                                                    leave-active-class="transition ease-in-out"
-                                                    leave-to-class="opacity-0"
-                                                >
-                                                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Eliminar.</p>
-                                                </Transition>
-                                            </div>
-                                        </form>
+                                        <!-- <form @submit.prevent="router.delete(route('tenant.delete', row.id))" > -->
+                                            <PrimaryButton :disabled="form.processing" @click.prevent="deleteTenant(row.id)">Eliminar</PrimaryButton>
+                                        <!-- </form> -->
                                     </td>
                                 </tr>
                             </tbody>

@@ -29,22 +29,16 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            // Route::middleware('api')
-            //     ->prefix('api')
-            //     ->group(base_path('routes/api.php'));
-
-            // Route::middleware('web')
-            //     ->group(base_path('routes/web.php'));
-
             $this->mapApiRoutes();
             $this->mapWebRoutes();
         });
     }
 
+
     protected function mapWebRoutes()
     {
-        // dd($this->centralDomains());
-        foreach ($this->centralDomains() as $domain) {
+        foreach ($this->centralDomains() as $domain) 
+        {
             Route::middleware('web')
                 ->domain($domain)
                 ->namespace($this->namespace)
@@ -52,9 +46,11 @@ class RouteServiceProvider extends ServiceProvider
         }
     }
 
+
     protected function mapApiRoutes()
     {
-        foreach ($this->centralDomains() as $domain) {
+        foreach ($this->centralDomains() as $domain) 
+        {
             Route::prefix('api')
                 ->domain($domain)
                 ->middleware('api')
@@ -62,6 +58,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/api.php'));
         }
     }
+
 
     protected function centralDomains(): array
     {

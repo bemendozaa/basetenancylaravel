@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\Tenant;
+use App\Models\Central\Tenant;
 use Stancl\Tenancy\Database\Models\Domain;
 // use Stancl\Tenancy\Database\Models\Tenant;
 
@@ -18,7 +18,7 @@ return [
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
     'central_domains' => [
-        config('tenant.app_url_base'),
+        env('APP_URL_BASE'),
         // '127.0.0.1',
         // 'localhost',
     ],
@@ -198,4 +198,11 @@ return [
         '--class' => 'DatabaseSeeder', // root seeder class
         // '--force' => true,
     ],
+
+    /**
+     * Automatically delete the tenant's database after the tenant is deleted.
+     *
+     * This will save space but permanently delete data which you might want to keep.
+     */
+    'delete_database_after_tenant_deletion' => true,
 ];
