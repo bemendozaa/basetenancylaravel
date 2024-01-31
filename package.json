@@ -18,6 +18,8 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "flowbite": "^2.2.1",
+        "flowbite-vue": "^0.1.2",
         "nprogress": "^0.2.0"
     }
 }

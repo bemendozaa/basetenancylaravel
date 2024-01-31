@@ -8,6 +8,7 @@ export function useTenants()
 {
     const isLoading = ref(false)
     const records = ref([])
+    const record = ref({})
 
     const responseData = reactive({
         success: false,
@@ -15,6 +16,20 @@ export function useTenants()
     })
 
     
+    const getRecord = async (id) => {
+        
+        showNProgress()
+
+        await http.get(`/tenants/record/${id}`)
+                .then((response)=>{
+                    record.value = response.data
+                })
+                .finally(()=>{
+                    hideNProgress()
+                })
+    }
+
+
     const getRecords = () => {
         
         showNProgress()
@@ -79,6 +94,8 @@ export function useTenants()
         isLoading,
         records,
         getRecords,
+        record,
+        getRecord,
         deleteTenant,
         store
     }
