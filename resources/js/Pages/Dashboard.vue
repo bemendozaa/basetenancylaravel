@@ -2,18 +2,16 @@
 
     import { Head } from '@inertiajs/vue3'
     import { reactive, ref } from 'vue'
-    import { FwbAlert, FwbButton } from 'flowbite-vue'
+    import { FwbButton } from 'flowbite-vue'
     
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-    import InputError from '@/Components/InputError.vue'
-    import InputLabel from '@/Components/InputLabel.vue'
     import PrimaryButton from '@/Components/PrimaryButton.vue'
-    import TextInput from '@/Components/TextInput.vue'
     import TenantForm from '@/Pages/Central/Tenants/Form.vue'
+    import EventBus from '../Libs/EventBus'
 
     import { useTenants } from '@/composables/central/tenants'
 
-    const { getRecords, records, store, deleteTenant } = useTenants()
+    const { getRecords, records, deleteRecord } = useTenants()
 
     const showModal = ref(false)
     const recordId = ref(null)
@@ -23,11 +21,14 @@
         showModal.value = true
     }
 
-    const form = reactive({
-        subdomain: '',
+    getRecords()
+
+    EventBus.on('reloadData', ()=>{
+
+        console.log("on reloadData")
+        getRecords()
     })
 
-    getRecords()
 
 </script>
 
@@ -44,29 +45,8 @@
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
 
-                        <fwb-alert icon type="success" class="mt-3 mb-3">
-                            <p class="alert-message">You're logged in!</p>
-                        </fwb-alert>
-
-                        <div>
-                            <InputLabel for="subdomain" value="Subdominio" />
-
-                            <TextInput
-                                id="subdomain"
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="form.subdomain"
-                                required
-                                autofocus
-                                autocomplete="subdomain"
-                            />
-
-                            <!-- <InputError class="mt-2" :message="form.errors.subdomain" /> -->
-                        </div>
-
                         <div class="flex items-center gap-4 mt-3">
-                            <!-- <PrimaryButton :disabled="form.processing" @click.prevent="store(form)">Registrar</PrimaryButton> -->
-                            <PrimaryButton @click="clickNewRecord()">Nuevo</PrimaryButton>
+                            <fwb-button color="default" @click="clickNewRecord()">Nuevo</fwb-button>
                         </div>
 
                         <br>
@@ -93,7 +73,7 @@
                                         
                                         <fwb-button color="default" size="sm" class="mx-2" @click="clickNewRecord(row.id)">Actualizar</fwb-button>
 
-                                        <fwb-button color="red" size="sm" @click="deleteTenant(row.id)">Eliminar</fwb-button>
+                                        <fwb-button color="red" size="sm" @click="deleteRecord(row.id)">Eliminar</fwb-button>
 
                                     </td>
                                 </tr>

@@ -3,18 +3,25 @@ import NProgress from 'nprogress'
 export function useGeneralFunction() 
 {
 
-    function showNProgress() 
-    {
-        NProgress.start()
-    }
+    const showNProgress = () => NProgress.start()
 
-    function hideNProgress() 
-    {
-        NProgress.done()
+    const hideNProgress = () => NProgress.done()
+
+    const parseValidationErros = (error, validationErrors) => {
+        
+        if (error.response.status === 422) 
+        {
+            validationErrors.value = error.response.data.errors
+        } 
+        else 
+        {
+            console.log(error)
+        }
     }
 
     return {
         showNProgress,
         hideNProgress,
+        parseValidationErros
     }
 }

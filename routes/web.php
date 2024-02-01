@@ -43,10 +43,15 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('tenants')->group(function(){
 
-        Route::post('store', [TenantController::class, 'store'])->name('tenant.store');
-        Route::get('records', [TenantController::class, 'records']);
-        Route::delete('{id}', [TenantController::class, 'delete'])->name('tenant.delete');
+        Route::controller(TenantController::class)->group(function(){
 
+            Route::post('', 'store');
+            Route::get('records', 'records');
+            Route::get('record/{id}', 'record');
+            Route::delete('{id}', 'delete');
+            
+        });
+        
     });
 
 });

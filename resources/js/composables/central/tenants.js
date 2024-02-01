@@ -1,16 +1,19 @@
 import { reactive, ref } from 'vue'
-import { useGeneralFunction } from '@/composables/main/useGeneralFunction'
+
+import EventBus from '../../Libs/EventBus'
 import  http from '@/helpers/http'
-const { showNProgress, hideNProgress } = useGeneralFunction()
+import { useGeneralFunction } from '@/composables/main/useGeneralFunction'
+
+const { showNProgress, hideNProgress, parseValidationErros } = useGeneralFunction()
 
 
 export function useTenants() 
 {
+    const validationErrors = ref({})
     const isLoading = ref(false)
+    const resource = ref('tenants')
     const records = ref([])
-    const record = ref({})
-
-    const responseData = reactive({
+    const responseData = ref({
         success: false,
         message: null
     })
@@ -20,13 +23,12 @@ export function useTenants()
         
         showNProgress()
 
-        await http.get(`/tenants/record/${id}`)
-                .then((response)=>{
-                    record.value = response.data
-                })
-                .finally(()=>{
-                    hideNProgress()
-                })
+        const response = await http.get(`/${resource.value}/record/${id}`)
+        
+        hideNProgress()
+        
+        return response.data.data
+                
     }
 
 
@@ -34,69 +36,62 @@ export function useTenants()
         
         showNProgress()
 
-        http.get('/tenants/records')
-            .then((response)=>{
+        http.get(`/${resource.value}/records`)
+            .then( (response) => {
                 records.value = response.data
             })
-            .finally(()=>{
-                hideNProgress()
-            })
+            .finally(() => hideNProgress())
+
     }
 
     
-    const store = (form) => {
+    const storeRecord = (form) => {
         
         showNProgress()
+        isLoading.value = true
 
-        http.post('/tenants/store', form)
+        http.post(`/${resource.value}`, form)
             .then( (response) => {
-                if(response.data.success)
-                {
-                    console.log(response.data.message)
-                    getRecords()
-                }
-                else
-                {
-                    console.log("no eliminado")
-                }
+
+                responseData.value = response.data
+                EventBus.emit('reloadData')
+                EventBus.emit('storeRecord')
+
             })
-            .finally(()=>{
+            .catch(error => {
+                parseValidationErros(error, validationErrors)
+            })
+            .finally(() => {
                 hideNProgress()
+                isLoading.value = false
             })
     }
 
 
-    const deleteTenant = (id) => {
-        console.log("deleteTenant")
+    const deleteRecord = (id) => {
+
         showNProgress()
         
-        http.delete(`/tenants/${id}`)
-            .then((response)=>{
-                console.log(response)
-    
-                if(response.data.success)
-                {
-                    console.log(response.data.message)
-                    getRecords()
-                }
-                else
-                {
-                    console.log("no eliminado")
-                }
+        http.delete(`/${resource.value}/${id}`)
+            .then( (response) => {
+                
+                responseData.value = response.data
+                EventBus.emit('reloadData')
+
             })
-            .finally(()=>{
-                hideNProgress()
-            })
+            .finally(() => hideNProgress())
     }
     
 
     return {
         isLoading,
         records,
-        getRecords,
-        record,
         getRecord,
-        deleteTenant,
-        store
+        getRecords,
+        deleteRecord,
+        storeRecord,
+        validationErrors,
+        responseData,
     }
+
 }

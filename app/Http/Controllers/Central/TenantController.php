@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Central\TenantRequest;
+use App\Http\Resources\Central\TenantResource;
 use App\Models\Central\Tenant;
 use Illuminate\Http\Request;
 
@@ -10,6 +12,14 @@ use Illuminate\Http\Request;
 class TenantController extends Controller
 {
     
+    public function record($id)
+    {
+        $record = Tenant::with('domain')->find($id);
+
+        return new TenantResource($record);
+    }
+
+
     public function records()
     {
         return Tenant::get();
@@ -29,7 +39,7 @@ class TenantController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(TenantRequest $request)
     {
         $tenant = Tenant::create([
             'tenancy_db_name' => config('tenant.prefix_database').'_'.$request->subdomain,
