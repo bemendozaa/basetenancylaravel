@@ -9,8 +9,10 @@ const { showNProgress, hideNProgress, parseValidationErros } = useGeneralFunctio
 
 export function useTenants() 
 {
+    const form = ref({})
     const validationErrors = ref({})
     const isLoading = ref(false)
+    const isLoadingButton = ref(false)
     const resource = ref('tenants')
     const records = ref([])
     const responseData = ref({
@@ -18,37 +20,71 @@ export function useTenants()
         message: null
     })
 
+    const pagination = ref({})
+
     
+    const customIndex = (index) => {
+        return (pagination.per_page * (pagination.current_page - 1)) + index + 1
+    }
+
+    const initForm = () => {
+
+        form.value = {
+            subdomain: '',
+        }
+
+        validationErrors.value = {}
+    }
+
+
     const getRecord = async (id) => {
         
-        showNProgress()
+        showLoading()
 
-        const response = await http.get(`/${resource.value}/record/${id}`)
-        
-        hideNProgress()
-        
-        return response.data.data
-                
+        await http.get(`/${resource.value}/record/${id}`)
+            .then( (response) => {
+                form.value = response.data.data
+            })
+            .finally(() => {
+                hideLoading()
+            })
     }
 
 
     const getRecords = () => {
         
-        showNProgress()
+        showLoading()
 
         http.get(`/${resource.value}/records`)
             .then( (response) => {
-                records.value = response.data
+                records.value = response.data.data
+                
+                pagination.value = response.data.meta
+                pagination.per_page = parseInt(response.data.meta.per_page)
             })
-            .finally(() => hideNProgress())
+            .finally(() => {
+                hideLoading()
+            })
 
     }
 
-    
-    const storeRecord = (form) => {
-        
+
+    const showLoading = () => {
         showNProgress()
         isLoading.value = true
+    }
+
+    
+    const hideLoading = () => {
+        hideNProgress()
+        isLoading.value = false
+    }
+
+
+    const storeRecord = () => {
+        
+        showNProgress()
+        isLoadingButton.value = true
 
         http.post(`/${resource.value}`, form)
             .then( (response) => {
@@ -63,7 +99,7 @@ export function useTenants()
             })
             .finally(() => {
                 hideNProgress()
-                isLoading.value = false
+                isLoadingButton.value = false
             })
     }
 
@@ -84,7 +120,9 @@ export function useTenants()
     
 
     return {
+        initForm,
         isLoading,
+        isLoadingButton,
         records,
         getRecord,
         getRecords,
@@ -92,6 +130,9 @@ export function useTenants()
         storeRecord,
         validationErrors,
         responseData,
+        form,
+        pagination,
+        customIndex
     }
 
 }

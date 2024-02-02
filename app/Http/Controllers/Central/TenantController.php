@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Central\TenantRequest;
+use App\Http\Resources\Central\TenantCollection;
 use App\Http\Resources\Central\TenantResource;
 use App\Models\Central\Tenant;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class TenantController extends Controller
 
     public function records()
     {
-        return Tenant::get();
+        return new TenantCollection(Tenant::paginate(5));
     }
 
 
