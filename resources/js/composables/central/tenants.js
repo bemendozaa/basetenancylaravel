@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue'
 import EventBus from '../../Libs/EventBus'
 import  http from '@/helpers/http'
 import { useGeneralFunction } from '@/composables/main/useGeneralFunction'
+// import queryString from 'query-string'
 
 const { showNProgress, hideNProgress, parseValidationErros } = useGeneralFunction()
 
@@ -14,18 +15,10 @@ export function useTenants()
     const isLoading = ref(false)
     const isLoadingButton = ref(false)
     const resource = ref('tenants')
-    const records = ref([])
     const responseData = ref({
         success: false,
         message: null
     })
-
-    const pagination = ref({})
-
-    
-    const customIndex = (index) => {
-        return (pagination.per_page * (pagination.current_page - 1)) + index + 1
-    }
 
     const initForm = () => {
 
@@ -51,24 +44,6 @@ export function useTenants()
     }
 
 
-    const getRecords = () => {
-        
-        showLoading()
-
-        http.get(`/${resource.value}/records`)
-            .then( (response) => {
-                records.value = response.data.data
-                
-                pagination.value = response.data.meta
-                pagination.per_page = parseInt(response.data.meta.per_page)
-            })
-            .finally(() => {
-                hideLoading()
-            })
-
-    }
-
-
     const showLoading = () => {
         showNProgress()
         isLoading.value = true
@@ -81,58 +56,59 @@ export function useTenants()
     }
 
 
-    const storeRecord = () => {
+    const storeRecord = async () => {
         
         showNProgress()
         isLoadingButton.value = true
 
-        http.post(`/${resource.value}`, form)
-            .then( (response) => {
+        await http.post(`/${resource.value}`, form.value)
+                .then( (response) => {
 
-                responseData.value = response.data
-                EventBus.emit('reloadData')
-                EventBus.emit('storeRecord')
+                    responseData.value = response.data
+                    EventBus.emit('reloadData')
+                    EventBus.emit('storeRecord')
 
-            })
-            .catch(error => {
-                parseValidationErros(error, validationErrors)
-            })
-            .finally(() => {
-                hideNProgress()
-                isLoadingButton.value = false
-            })
+                })
+                .catch(error => {
+                    parseValidationErros(error, validationErrors)
+                })
+                .finally(() => {
+                    hideNProgress()
+                    isLoadingButton.value = false
+                })
     }
 
 
     const deleteRecord = (id) => {
 
         showNProgress()
+        isLoadingButton.value = true
         
         http.delete(`/${resource.value}/${id}`)
             .then( (response) => {
                 
                 responseData.value = response.data
                 EventBus.emit('reloadData')
+                EventBus.emit('deleteRecord')
 
             })
-            .finally(() => hideNProgress())
+            .finally(() => {
+                hideNProgress()
+                isLoadingButton.value = false
+            })
     }
     
 
     return {
-        initForm,
+        form,
         isLoading,
         isLoadingButton,
-        records,
-        getRecord,
-        getRecords,
-        deleteRecord,
-        storeRecord,
-        validationErrors,
         responseData,
-        form,
-        pagination,
-        customIndex
+        validationErrors,
+        deleteRecord,
+        getRecord,
+        initForm,
+        storeRecord,
     }
 
 }

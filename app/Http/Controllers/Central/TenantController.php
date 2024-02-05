@@ -23,7 +23,7 @@ class TenantController extends Controller
 
     public function records()
     {
-        return new TenantCollection(Tenant::paginate(5));
+        return new TenantCollection(Tenant::latest()->paginate(5));
     }
 
 

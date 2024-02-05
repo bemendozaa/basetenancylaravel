@@ -7,7 +7,7 @@
     import { useTenants } from '@/composables/central/tenants'
     import EventBus from '@/Libs/EventBus'
 
-    const { form, validationErrors, responseData, isLoading, isLoadingButton, initForm, getRecord, storeRecord } = useTenants()
+    const { deleteRecord, isLoading, isLoadingButton } = useTenants()
     
     const props = defineProps({
         recordId: {
@@ -21,46 +21,20 @@
     })
 
 
-    const modalTitle = ref('')
-
-
-    watch(
-        ()=> props.showModal,
-        (newValue) => {
-            if(newValue) openModal(newValue)
-        }
-    )
-
-
     const emit = defineEmits([
         'update:showModal',
     ])
 
-    
-    const closeModal = () => {
-        initForm()
-        emit('update:showModal', false)
-    }
+    const closeModal = () => emit('update:showModal', false)
 
 
-    const openModal = async () => {
-        const id = props.recordId
-        modalTitle.value = id ? 'Actualizar tenant' : 'Nuevo tenant'
-
-        if(id)
-        {
-            await getRecord(id)
-        }
-    }
-
-    EventBus.on('storeRecord', ()=>{
+    EventBus.on('deleteRecord', ()=>{
         closeModal()
     })
 
 
-    const saveRecord = () => storeRecord()
+    const destroy = () => deleteRecord(props.recordId)
 
-    initForm()
 
 </script>
 
@@ -69,18 +43,11 @@
     <fwb-modal v-if="showModal" @close="closeModal" >
 
         <template #header>
-            {{ modalTitle }}
+            <p class="font-bold text-xl">Eliminar</p>
         </template>
         <template #body>
             <loading-body :isLoading="isLoading">
-
-                <fwb-input
-                    v-model="form.subdomain"
-                    label="Subdominio"
-                    :validation-status="validationErrors.subdomain ? 'error' : ''"
-                    />
-                <input-error v-if="validationErrors.subdomain" :message="validationErrors.subdomain[0]"></input-error>
-
+                <p class="text-lg">¿Está seguro de eliminar el registro?</p>
             </loading-body>
         </template>
         <template #footer>
@@ -88,9 +55,9 @@
                 <fwb-button @click="closeModal" color="alternative" class="mx-2">
                     Cancelar
                 </fwb-button>
-                <fwb-button @click="saveRecord" color="default" :disabled="isLoadingButton">
+                <fwb-button @click="destroy" color="red" :disabled="isLoadingButton">
                     <fwb-spinner size="4" v-if="isLoadingButton"  class="inline mx-1"/>
-                    Guardar
+                    Eliminar
                 </fwb-button>
             </div>
         </template>

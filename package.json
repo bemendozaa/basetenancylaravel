@@ -21,6 +21,7 @@
         "flowbite": "^2.2.1",
         "flowbite-vue": "^0.1.2",
         "mitt": "^3.0.1",
-        "nprogress": "^0.2.0"
+        "nprogress": "^0.2.0",
+        "query-string": "^8.2.0"
     }
 }
