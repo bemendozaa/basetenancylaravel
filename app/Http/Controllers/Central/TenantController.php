@@ -53,6 +53,7 @@ class TenantController extends Controller
         // dd($request->all());
         return [
             'success' => true,
+            'message' => 'Tenant creado correctamente.',
             'data' => $tenant,
         ];
     }

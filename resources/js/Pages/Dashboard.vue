@@ -47,6 +47,7 @@
                         <DataTable
                             class="mt-5"
                             :resource="resource"
+                            :columns="4"
                         >
                             <template v-slot:head>
                                 <tr>

@@ -15,10 +15,7 @@ export function useTenants()
     const isLoading = ref(false)
     const isLoadingButton = ref(false)
     const resource = ref('tenants')
-    const responseData = ref({
-        success: false,
-        message: null
-    })
+    const responseData = ref({})
 
     const initForm = () => {
 
@@ -88,8 +85,17 @@ export function useTenants()
             .then( (response) => {
                 
                 responseData.value = response.data
+
                 EventBus.emit('reloadData')
-                EventBus.emit('deleteRecord')
+                EventBus.emit('deleteRecord', responseData)
+
+            })
+            .catch(error => {
+                
+                responseData.value = {
+                    success: false,
+                    message: error.response.data.message
+                }
 
             })
             .finally(() => {

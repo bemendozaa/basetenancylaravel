@@ -1,13 +1,13 @@
 <script setup>
-    import { ref, watch } from 'vue'
-    import { FwbButton, FwbModal, FwbInput, FwbSpinner } from 'flowbite-vue'
 
-    import InputError from '@/Components/InputError.vue'
+    import { ref } from 'vue'
+    import { FwbButton, FwbModal, FwbToast, FwbSpinner  } from 'flowbite-vue'
+
     import LoadingBody from '@/Components/LoadingBody.vue'
     import { useTenants } from '@/composables/central/tenants'
     import EventBus from '@/Libs/EventBus'
 
-    const { deleteRecord, isLoading, isLoadingButton } = useTenants()
+    const { deleteRecord, isLoading, isLoadingButton, responseData } = useTenants()
     
     const props = defineProps({
         recordId: {
@@ -27,9 +27,18 @@
 
     const closeModal = () => emit('update:showModal', false)
 
+    // const toast = useToast()
 
-    EventBus.on('deleteRecord', ()=>{
-        closeModal()
+    EventBus.on('deleteRecord', () => {
+
+        console.log("e deleteRecord")
+        const response = responseData.value
+        
+        if(response.success)
+        {
+
+            closeModal()
+        }
     })
 
 
@@ -40,12 +49,20 @@
 
 <template>
 
+            
+    <!-- <div class="xl:w-1/6 md:w-1/4 sm:w-1/4 fixed top-3 right-3 flex flex-col gap-2 z-50" v-if="responseData.success != undefined">
+        <fwb-toast closable :type="responseData.success ? 'success' : 'danger'">
+            {{ responseData.message }}
+        </fwb-toast>
+    </div> -->
+
     <fwb-modal v-if="showModal" @close="closeModal" >
 
         <template #header>
             <p class="font-bold text-xl">Eliminar</p>
         </template>
         <template #body>
+
             <loading-body :isLoading="isLoading">
                 <p class="text-lg">¿Está seguro de eliminar el registro?</p>
             </loading-body>

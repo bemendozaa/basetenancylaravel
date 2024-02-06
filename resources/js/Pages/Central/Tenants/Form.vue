@@ -7,6 +7,8 @@
     import { useTenants } from '@/composables/central/tenants'
     import EventBus from '@/Libs/EventBus'
 
+    import { useToast } from "vue-toastification";
+
     const { form, validationErrors, responseData, isLoading, isLoadingButton, initForm, getRecord, storeRecord } = useTenants()
     
     const props = defineProps({
@@ -53,7 +55,15 @@
         }
     }
 
-    EventBus.on('storeRecord', ()=>{
+    const toast = useToast();
+
+
+    EventBus.on('storeRecord', () => {
+
+        console.log("storeRecord")
+
+        toast.success(responseData.value.message);
+
         closeModal()
     })
 

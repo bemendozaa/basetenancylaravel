@@ -12,6 +12,10 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    columns: {
+        type: Number,
+        required: true,
+    },
 })
 
 EventBus.on('reloadData', () => getRecords())
@@ -43,6 +47,12 @@ onMounted(() => {
                     :index="customIndex(index)"
                 >
                 </slot>
+                
+                <tr v-if="records.length === 0">
+                    <td class="border border-slate-300 px-4 py-2 text-center" :colspan="columns">
+                        Sin datos
+                    </td>
+                </tr>
 
             </tbody>
         </table>
