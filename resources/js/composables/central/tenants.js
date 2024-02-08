@@ -1,9 +1,8 @@
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 
 import EventBus from '../../Libs/EventBus'
 import  http from '@/helpers/http'
 import { useGeneralFunction } from '@/composables/main/useGeneralFunction'
-// import queryString from 'query-string'
 
 const { showNProgress, hideNProgress, parseValidationErros } = useGeneralFunction()
 
@@ -16,6 +15,7 @@ export function useTenants()
     const isLoadingButton = ref(false)
     const resource = ref('tenants')
     const responseData = ref({})
+    const httpExecuted = ref(false)
 
     const initForm = () => {
 
@@ -63,7 +63,7 @@ export function useTenants()
 
                     responseData.value = response.data
                     EventBus.emit('reloadData')
-                    EventBus.emit('storeRecord')
+                    httpExecuted.value = true
 
                 })
                 .catch(error => {
@@ -76,42 +76,13 @@ export function useTenants()
     }
 
 
-    const deleteRecord = (id) => {
-
-        showNProgress()
-        isLoadingButton.value = true
-        
-        http.delete(`/${resource.value}/${id}`)
-            .then( (response) => {
-                
-                responseData.value = response.data
-
-                EventBus.emit('reloadData')
-                EventBus.emit('deleteRecord', responseData)
-
-            })
-            .catch(error => {
-                
-                responseData.value = {
-                    success: false,
-                    message: error.response.data.message
-                }
-
-            })
-            .finally(() => {
-                hideNProgress()
-                isLoadingButton.value = false
-            })
-    }
-    
-
     return {
         form,
         isLoading,
         isLoadingButton,
         responseData,
         validationErrors,
-        deleteRecord,
+        httpExecuted,
         getRecord,
         initForm,
         storeRecord,

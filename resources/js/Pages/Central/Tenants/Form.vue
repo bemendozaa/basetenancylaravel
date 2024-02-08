@@ -1,16 +1,21 @@
 <script setup>
     import { ref, watch } from 'vue'
     import { FwbButton, FwbModal, FwbInput, FwbSpinner } from 'flowbite-vue'
+    import { useToast } from 'vue-toastification'
 
     import InputError from '@/Components/InputError.vue'
     import LoadingBody from '@/Components/LoadingBody.vue'
     import { useTenants } from '@/composables/central/tenants'
-    import EventBus from '@/Libs/EventBus'
 
-    import { useToast } from "vue-toastification";
 
-    const { form, validationErrors, responseData, isLoading, isLoadingButton, initForm, getRecord, storeRecord } = useTenants()
+    const emit = defineEmits([
+        'update:showModal',
+    ])
+
+    const { form, validationErrors, responseData, httpExecuted, isLoading, isLoadingButton, initForm, getRecord, storeRecord } = useTenants(emit)
+    const toast = useToast()
     
+
     const props = defineProps({
         recordId: {
             type: String,
@@ -25,6 +30,7 @@
 
     const modalTitle = ref('')
 
+    watch(httpExecuted, (value) => processHttpResponse(value))
 
     watch(
         ()=> props.showModal,
@@ -32,11 +38,6 @@
             if(newValue) openModal(newValue)
         }
     )
-
-
-    const emit = defineEmits([
-        'update:showModal',
-    ])
 
     
     const closeModal = () => {
@@ -55,17 +56,22 @@
         }
     }
 
-    const toast = useToast();
 
+    const processHttpResponse = (value) => {
 
-    EventBus.on('storeRecord', () => {
+        if(!value) return
 
-        console.log("storeRecord")
+        httpExecuted.value = false
 
-        toast.success(responseData.value.message);
+        if(responseData.value.success)
+        {
+            toast.success(responseData.value.message)
+            closeModal()
+            return
+        }
 
-        closeModal()
-    })
+        toast.error(responseData.value.message)
+    }
 
 
     const saveRecord = () => storeRecord()

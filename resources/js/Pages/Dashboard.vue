@@ -13,6 +13,7 @@
     const showModalDelete = ref(false)
     const recordId = ref(null)
     const resource = ref('tenants')
+    const urlDelete = ref('')
 
     const clickNewRecord = (id = null) => {
         recordId.value = id
@@ -20,7 +21,7 @@
     }
     
     const clickDelete = (id = null) => {
-        recordId.value = id
+        urlDelete.value = `/${resource.value}/${id}`
         showModalDelete.value = true
     }
 
@@ -94,7 +95,7 @@
         
         <delete 
             v-model:showModal="showModalDelete"
-            :recordId="recordId"
+            :url="urlDelete"
         >
         </delete>
 

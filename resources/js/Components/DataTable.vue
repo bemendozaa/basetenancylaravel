@@ -20,7 +20,9 @@ const props = defineProps({
 
 EventBus.on('reloadData', () => getRecords())
 
-const { getRecords, records, isLoading, pagination, customIndex } = useDataTable(props.resource)
+const context = { resource: props.resource }
+
+const { getRecords, records, isLoading, pagination, customIndex } = useDataTable(context)
 
 onMounted(() => {
     getRecords()
@@ -57,15 +59,21 @@ onMounted(() => {
             </tbody>
         </table>
         <div class="mt-5">
+
             <fwb-pagination 
                 v-model="pagination.current_page" 
-                :total-pages="pagination.last_page" 
+                :total-pages="pagination.last_page"
                 :per-page="pagination.per_page" 
                 previous-label="<<<" 
                 next-label=">>>"
                 @update:model-value="getRecords()"
                 >
             </fwb-pagination>
+
+            <p class="mt-2 font-bold">
+                Mostrando {{ pagination.from }} a {{ pagination.to }} de {{ pagination.total }}
+            </p>
+
         </div>
     </loading-body>
 

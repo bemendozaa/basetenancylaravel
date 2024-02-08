@@ -24,7 +24,7 @@ class TenantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subdomain' => ['required', 'string'],
+            'subdomain' => ['required', 'string', 'unique:domains,domain'],
         ];
     }
 

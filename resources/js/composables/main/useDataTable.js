@@ -6,7 +6,7 @@ import { useGeneralFunction } from '@/composables/main/useGeneralFunction'
 const { showNProgress, hideNProgress } = useGeneralFunction()
 
 
-export function useDataTable(resource) 
+export function useDataTable(context) 
 {
     const isLoading = ref(false)
     const records = ref([])
@@ -38,7 +38,7 @@ export function useDataTable(resource)
         showNProgress()
         isLoading.value = true
 
-        await http.get(`/${resource}/records?${getQueryParameters()}`)
+        await http.get(`/${context.resource}/records?${getQueryParameters()}`)
                 .then( (response) => {
                     records.value = response.data.data
                     pagination.value = response.data.meta

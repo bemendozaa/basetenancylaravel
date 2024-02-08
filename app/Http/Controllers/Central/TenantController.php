@@ -7,8 +7,10 @@ use App\Http\Requests\Central\TenantRequest;
 use App\Http\Resources\Central\TenantCollection;
 use App\Http\Resources\Central\TenantResource;
 use App\Models\Central\Tenant;
+use App\Models\Tenant\User;
+use Exception;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 
 class TenantController extends Controller
 {
@@ -27,35 +29,63 @@ class TenantController extends Controller
     }
 
 
-    public function delete($id)
-    {
-        $tenant = tenancy()->find($id);
-        $tenant->delete();
-
-        return [
-            'success' => true,
-            'message' => 'Tenant eliminado',
-            'data' => $tenant,
-        ];
-    }
-
-
     public function store(TenantRequest $request)
     {
-        $tenant = Tenant::create([
-            'tenancy_db_name' => config('tenant.prefix_database').'_'.$request->subdomain,
-        ]);
+        try 
+        {
+            $tenant = Tenant::create([
+                'tenancy_db_name' => config('tenant.prefix_database').'_'.$request->subdomain,
+            ]);
+    
+            $tenant->domains()->create([
+                'domain' => $request->subdomain.'.'.config('tenant.app_url_base')
+            ]);
+    
+            tenancy()->initialize($tenant);
 
-        $tenant->domains()->create([
-            'domain' => $request->subdomain.'.'.config('tenant.app_url_base')
-        ]);
+            $user = User::create([
+                'name' => 'John Doe_'.now(),
+                'email' => 'john@localhost',
+                'password' => 'secret',
+            ]);
 
-        // dd($request->all());
-        return [
-            'success' => true,
-            'message' => 'Tenant creado correctamente.',
-            'data' => $tenant,
-        ];
+
+            return [
+                'success' => true,
+                'message' => 'Tenant creado correctamente.',
+                'data' => $tenant,
+            ];
+        }
+        catch(Exception $e) 
+        {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+
     }
     
+    
+    public function delete($id)
+    {
+        try 
+        {
+            $tenant = Tenant::findOrFail($id);
+            $tenant->delete();
+
+            return [
+                'success' => true,
+                'message' => 'Tenant eliminado',
+            ];
+        }
+        catch(Exception $e) 
+        {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
 }
