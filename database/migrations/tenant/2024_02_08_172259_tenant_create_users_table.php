@@ -20,12 +20,6 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
-
-        
-        \App\Models\User::factory()->create([
-            'name' => 'Test User 2',
-            'email' => 'test@example.com',
-        ]);
     }
 
     /**

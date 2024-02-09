@@ -152,5 +152,6 @@ return [
 		'date'                      => 'fecha',
 		'time'                      => 'hora',
 		'subdomain' => 'subdominio',
+		'current_password' => 'contraseña actual',
 	],
 ];
