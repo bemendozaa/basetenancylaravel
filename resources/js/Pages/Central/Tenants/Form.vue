@@ -12,7 +12,7 @@
         'update:showModal',
     ])
 
-    const { form, validationErrors, responseData, httpExecuted, isLoading, isLoadingButton, initForm, getRecord, storeRecord } = useTenants(emit)
+    const { form, validationErrors, responseData, httpExecuted, isLoading, isLoadingButton, initForm, getRecord, storeRecord } = useTenants()
     const toast = useToast()
     
 
@@ -96,6 +96,20 @@
                     :validation-status="validationErrors.subdomain ? 'error' : ''"
                     />
                 <input-error v-if="validationErrors.subdomain" :message="validationErrors.subdomain[0]"></input-error>
+                
+                <fwb-input
+                    v-model="form.email"
+                    label="Correo electrónico"
+                    :validation-status="validationErrors.email ? 'error' : ''"
+                    />
+                <input-error v-if="validationErrors.email" :message="validationErrors.email[0]"></input-error>
+                
+                <fwb-input
+                    v-model="form.password"
+                    label="Contraseña"
+                    :validation-status="validationErrors.password ? 'error' : ''"
+                    />
+                <input-error v-if="validationErrors.password" :message="validationErrors.password[0]"></input-error>
 
             </loading-body>
         </template>

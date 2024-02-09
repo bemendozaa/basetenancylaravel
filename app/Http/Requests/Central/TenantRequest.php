@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Central;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rules\Password;
 
 class TenantRequest extends FormRequest
 {
@@ -24,7 +24,9 @@ class TenantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subdomain' => ['required', 'string', 'unique:domains,domain'],
+            'subdomain' => ['required', 'string'],
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', Password::defaults()],
         ];
     }
 

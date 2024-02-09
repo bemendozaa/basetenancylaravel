@@ -10,7 +10,6 @@ use App\Models\Central\Tenant;
 use App\Models\Tenant\User;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TenantController extends Controller
 {
@@ -28,33 +27,61 @@ class TenantController extends Controller
         return new TenantCollection(Tenant::latest()->paginate(5));
     }
 
+    
+    /**
+     *
+     * @param  string $subdomain
+     * @return string
+     */
+    private function getSubdomain(string $subdomain): string
+    {
+        return $subdomain.'.'.config('tenant.app_url_base');
+    }
+
+    
+    /**
+     *
+     * @param  string $subdomain
+     * @return void
+     */
+    private function validateSubdomain(string $subdomain): void
+    {
+        $exist = Tenant::whereHas('domain', fn($query) => $query->where('domain', $subdomain))->first();
+
+        if(!is_null($exist)) throw new Exception('El subdominio ya ha sido registrado.');
+    }
+
+
 
     public function store(TenantRequest $request)
     {
         try 
         {
+            $subdomain = $this->getSubdomain($request->subdomain);
+            
+            $this->validateSubdomain($subdomain);
+
             $tenant = Tenant::create([
                 'tenancy_db_name' => config('tenant.prefix_database').'_'.$request->subdomain,
             ]);
     
             $tenant->domains()->create([
-                'domain' => $request->subdomain.'.'.config('tenant.app_url_base')
+                'domain' => $subdomain
             ]);
     
             tenancy()->initialize($tenant);
 
-            $user = User::create([
-                'name' => 'John Doe_'.now(),
-                'email' => 'john@localhost',
-                'password' => 'secret',
+            User::create([
+                'name' => 'Administrador',
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
             ]);
-
 
             return [
                 'success' => true,
                 'message' => 'Tenant creado correctamente.',
-                'data' => $tenant,
             ];
+
         }
         catch(Exception $e) 
         {

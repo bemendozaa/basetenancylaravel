@@ -21,6 +21,8 @@ export function useTenants()
 
         form.value = {
             subdomain: '',
+            email: '',
+            password: '',
         }
 
         validationErrors.value = {}

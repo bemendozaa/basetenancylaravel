@@ -84,7 +84,7 @@
                                     </td>
                                     <td class="border border-slate-300 px-4 py-2">
                                         
-                                        <fwb-button color="default" size="sm" class="mx-2" @click="clickNewRecord(row.id)">Actualizar</fwb-button>
+                                        <!-- <fwb-button color="default" size="sm" class="mx-2" @click="clickNewRecord(row.id)">Actualizar</fwb-button> -->
 
                                         <fwb-button color="red" size="sm" @click="clickDelete(row.id)">Eliminar</fwb-button>
 
