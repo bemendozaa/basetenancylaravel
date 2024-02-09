@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\Tenant\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\Tenant\PasswordController;
+use App\Http\Controllers\Tenant\ItemController;
 use App\Http\Controllers\Tenant\DashboardController;
 use App\Http\Controllers\Tenant\ProfileController;
 use Illuminate\Foundation\Application;
@@ -57,6 +58,18 @@ Route::middleware([
         Route::patch('profile', [ProfileController::class, 'update'])->name('tenant.profile.update');
 
         Route::get('dashboard', [DashboardController::class, 'index'])->middleware(['verified'])->name('tenant.dashboard.index');
+
+        
+        Route::controller(ItemController::class)
+            ->prefix('items')
+            ->group(function(){
+
+                Route::post('', 'store');
+                Route::get('records', 'records');
+                Route::get('record/{id}', 'record');
+                Route::delete('{id}', 'delete');
+                
+            });
 
     });
 
