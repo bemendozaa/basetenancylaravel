@@ -33,7 +33,35 @@ onMounted(() => {
 <template>
 
     <loading-body :isLoading="isLoading">
-        <table class="border-collapse border border-slate-400" style="width: 100%;">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    
+                    <slot
+                        name="head"
+                    >
+                    </slot>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    
+                    <slot
+                        name="body"
+                        v-for="(row, index) in records"
+                        :row="row"
+                        :index="customIndex(index)"
+                    >
+                    </slot>
+                    
+                    <tr v-if="records.length === 0">
+                        <td class="border border-slate-300 px-4 py-2 text-center" :colspan="columns">
+                            Sin datos
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- <table class="border-collapse border border-slate-400" style="width: 100%;">
             <thead>
                 <slot
                     name="head"
@@ -57,7 +85,7 @@ onMounted(() => {
                 </tr>
 
             </tbody>
-        </table>
+        </table> -->
         <div class="mt-5">
 
             <fwb-pagination 

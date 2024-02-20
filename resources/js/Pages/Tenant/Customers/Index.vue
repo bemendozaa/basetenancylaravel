@@ -4,16 +4,15 @@
     import { FwbButton } from 'flowbite-vue'
     
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-    import RecordForm from '@/Pages/Tenant/Items/Form.vue'
+    import RecordForm from '@/Pages/Tenant/Customers/Form.vue'
     import DataTable from '@/Components/DataTable.vue'
     import Delete from '@/Components/Delete.vue'
-    import { useMainStore } from '@/Stores/main.js'
 
 
     const showModal = ref(false)
     const showModalDelete = ref(false)
     const recordId = ref(null)
-    const resource = ref('items')
+    const resource = ref('customers')
     const urlDelete = ref('')
 
     const clickNewRecord = (id = null) => {
@@ -33,7 +32,7 @@
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Productos</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Clientes</h2>
         </template>
 
         <div class="py-12">
@@ -55,7 +54,7 @@
                                 <tr>
                                     <th class="border border-slate-300 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
                                     <th class="border border-slate-300 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                                    <th class="border border-slate-300 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                                    <th class="border border-slate-300 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Número</th>
                                     <th class="border border-slate-300 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                                 </tr>
                             </template>
@@ -69,7 +68,7 @@
                                         {{ row.name }}
                                     </td>
                                     <td class="border border-slate-300 px-3 whitespace-nowrap">
-                                        {{  row.price }}
+                                        {{  row.number }}
                                     </td>
                                     <td class="border border-slate-300 px-4 py-2">
                                         

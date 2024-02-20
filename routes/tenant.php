@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\Tenant\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\Tenant\PasswordController;
+use App\Http\Controllers\Tenant\CustomerController;
 use App\Http\Controllers\Tenant\ItemController;
 use App\Http\Controllers\Tenant\DashboardController;
 use App\Http\Controllers\Tenant\ProfileController;
@@ -71,6 +72,17 @@ Route::middleware([
                 
             });
 
+        Route::controller(CustomerController::class)
+            ->prefix('customers')
+            ->group(function(){
+
+                Route::get('', 'index')->name('tenant.customers.index');
+                Route::post('', 'store');
+                Route::get('records', 'records');
+                Route::get('record/{id}', 'record');
+                Route::delete('{id}', 'delete');
+                
+            });
     });
 
 

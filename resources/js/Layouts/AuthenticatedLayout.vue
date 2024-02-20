@@ -38,6 +38,9 @@ const showingNavigationDropdown = ref(false);
                                     <NavLink :href="route('tenant.dashboard.index')" :active="route().current('dashboard')">
                                         Dashboard Tenant
                                     </NavLink>
+                                    <NavLink :href="route('tenant.customers.index')" :active="route().current('customers')">
+                                        Clientes
+                                    </NavLink>
                                 </template>
                                 <template v-else>
                                     <NavLink :href="route('central.dashboard.index')" :active="route().current('dashboard')">

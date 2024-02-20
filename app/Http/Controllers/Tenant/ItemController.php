@@ -21,7 +21,7 @@ class ItemController extends Controller
 
     public function records()
     {
-        return new ItemCollection(Item::latest()->paginate(5));
+        return new ItemCollection(Item::latest()->paginate(config('tenant.items_per_page')));
     }
 
 

@@ -153,5 +153,6 @@ return [
 		'time'                      => 'hora',
 		'subdomain' => 'subdominio',
 		'current_password' => 'contraseña actual',
+		'number' => 'número',
 	],
 ];
