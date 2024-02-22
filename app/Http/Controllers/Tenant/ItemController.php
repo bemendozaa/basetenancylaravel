@@ -7,21 +7,30 @@ use App\Http\Requests\Tenant\ItemRequest;
 use App\Http\Resources\Tenant\ItemCollection;
 use App\Http\Resources\Tenant\ItemResource;
 use App\Models\Tenant\Item;
+use App\Services\Tenant\ItemService;
 use Exception;
 
 
 class ItemController extends Controller
 {
-    
+
+    public $itemService;
+
+    public function __construct(ItemService $itemService) 
+    {
+        $this->itemService = $itemService;
+    }
+
+
     public function record($id)
     {
-        return new ItemResource(Item::findOrFail($id));
+        return new ItemResource($this->itemService->getRecord($id));
     }
 
 
     public function records()
     {
-        return new ItemCollection(Item::latest()->paginate(config('tenant.items_per_page')));
+        return new ItemCollection($this->itemService->getRecords());
     }
 
 
@@ -30,9 +39,7 @@ class ItemController extends Controller
         try 
         {
             $id = $request->id;
-            $record = Item::firstOrNew(['id' => $id]);
-            $record->fill($request->all());
-            $record->save();
+            $this->itemService->storeOrUpdateRecord($request->all());
 
             return [
                 'success' => true,
@@ -55,8 +62,7 @@ class ItemController extends Controller
     {
         try 
         {
-            $record = Item::findOrFail($id);
-            $record->delete();
+            $this->itemService->destroyRecordById($id);
 
             return [
                 'success' => true,

@@ -7,6 +7,7 @@ use App\Http\Requests\Tenant\CustomerRequest;
 use App\Http\Resources\Tenant\CustomerCollection;
 use App\Http\Resources\Tenant\CustomerResource;
 use App\Repositories\Tenant\CustomerRepositoryInterface;
+use App\Services\Tenant\CustomerService;
 use Exception;
 use Inertia\Inertia;
 
@@ -14,11 +15,11 @@ use Inertia\Inertia;
 class CustomerController extends Controller
 {
 
-    protected $customerRepository;
+    protected $customerService;
     
-    public function __construct(CustomerRepositoryInterface $customerRepository)
+    public function __construct(CustomerService $customerService)
     {
-        $this->customerRepository = $customerRepository;
+        $this->customerService = $customerService;
     }
 
 
@@ -30,13 +31,13 @@ class CustomerController extends Controller
 
     public function record($id)
     {
-        return new CustomerResource($this->customerRepository->findById($id));
+        return new CustomerResource($this->customerService->getRecord($id));
     }
 
 
     public function records()
     {
-        return new CustomerCollection($this->customerRepository->records());
+        return new CustomerCollection($this->customerService->getRecords());
     }
 
 
@@ -44,7 +45,7 @@ class CustomerController extends Controller
     {
         try 
         {
-            $this->customerRepository->storeOrUpdate($request->validated());
+            $this->customerService->storeOrUpdateRecord($request->all());
 
             return [
                 'success' => true,
@@ -67,7 +68,7 @@ class CustomerController extends Controller
     {
         try 
         {
-            $this->customerRepository->destroyById($id);
+            $this->customerService->destroyRecordById($id);
 
             return [
                 'success' => true,
