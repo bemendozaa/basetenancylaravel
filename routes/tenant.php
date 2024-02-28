@@ -71,6 +71,7 @@ Route::middleware([
                 Route::delete('{id}', 'delete');
                 
             });
+            
 
         Route::controller(CustomerController::class)
             ->prefix('customers')
@@ -79,6 +80,7 @@ Route::middleware([
                 Route::get('', 'index')->name('tenant.customers.index');
                 Route::post('', 'store');
                 Route::get('records', 'records');
+                Route::get('columns', 'columns');
                 Route::get('record/{id}', 'record');
                 Route::delete('{id}', 'delete');
                 

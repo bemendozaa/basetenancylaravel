@@ -9,6 +9,7 @@ use App\Http\Resources\Tenant\CustomerResource;
 use App\Repositories\Tenant\CustomerRepositoryInterface;
 use App\Services\Tenant\CustomerService;
 use Exception;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 
@@ -35,9 +36,9 @@ class CustomerController extends Controller
     }
 
 
-    public function records()
+    public function records(Request $request)
     {
-        return new CustomerCollection($this->customerService->getRecords());
+        return new CustomerCollection($this->customerService->getRecords($request->column, $request->value));
     }
 
 
@@ -82,6 +83,12 @@ class CustomerController extends Controller
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    
+    public function columns()
+    {
+        return $this->customerService->getSearchColumns();
     }
 
 }

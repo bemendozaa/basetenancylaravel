@@ -3,34 +3,17 @@
 namespace App\Repositories\Tenant;
 
 use App\Models\Tenant\Customer;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Repositories\Tenant\Contracts\CustomerRepositoryInterface;
 
-class CustomerRepository implements CustomerRepositoryInterface
+class CustomerRepository extends CrudRepository implements CustomerRepositoryInterface
 {
 
-    public function records() : LengthAwarePaginator
-    {   
-        return Customer::latest()->paginate(config('tenant.items_per_page'));
-    }
+    protected $model;
 
-    public function findById($id) : Customer
+    public function __construct(Customer $model)
     {
-        return Customer::findOrFail($id);
+        $this->model = $model;
     }
 
-    public function storeOrUpdate($data = []) : Customer
-    {   
-        $id = $data['id'] ?? null;
-        $record = Customer::firstOrNew(['id' => $id]);
-        $record->fill($data);
-        $record->save();
-
-        return $record;
-    }
-    
-    public function destroyById($id)
-    {
-        return $this->findById($id)->delete();
-    }
 
 }

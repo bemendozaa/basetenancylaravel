@@ -2,10 +2,9 @@
 
 namespace App\Models\Tenant;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel;
 
-
-class Item extends Model
+class Item extends BaseModel
 {
 
     protected $fillable = [

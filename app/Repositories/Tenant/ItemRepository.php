@@ -3,34 +3,24 @@
 namespace App\Repositories\Tenant;
 
 use App\Models\Tenant\Item;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Repositories\Tenant\Contracts\ItemRepositoryInterface;
 
-class ItemRepository implements ItemRepositoryInterface
+class ItemRepository extends SimpleCrudRepository implements ItemRepositoryInterface
 {
 
-    public function records() : LengthAwarePaginator
-    {   
-        return Item::latest()->paginate(config('tenant.items_per_page'));
-    }
+    protected $model;
 
-    public function findById($id) : Item
+    public function __construct(Item $model)
     {
-        return Item::findOrFail($id);
-    }
-
-    public function storeOrUpdate($data = []) : Item
-    {   
-        $id = $data['id'] ?? null;
-        $record = Item::firstOrNew(['id' => $id]);
-        $record->fill($data);
-        $record->save();
-
-        return $record;
+        $this->model = $model;
     }
     
-    public function destroyById($id)
+
+    public function columns(): array
     {
-        return $this->findById($id)->delete();
+        return [
+            "item"
+        ];
     }
 
 }

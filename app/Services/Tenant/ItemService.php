@@ -2,8 +2,7 @@
 
 namespace App\Services\Tenant;
 
-use App\Repositories\Tenant\ItemRepositoryInterface;
-
+use App\Repositories\Tenant\Contracts\ItemRepositoryInterface;
 
 class ItemService
 {
@@ -25,7 +24,7 @@ class ItemService
 
     public function getRecords()
     {
-        return $this->itemRepository->records();
+        return $this->itemRepository->getPaginateRecords();
     }
 
 
@@ -39,5 +38,5 @@ class ItemService
     {
         $this->itemRepository->destroyById($id);
     }
-
+    
 }

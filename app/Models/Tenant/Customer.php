@@ -2,10 +2,9 @@
 
 namespace App\Models\Tenant;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel;
 
-
-class Customer extends Model
+class Customer extends BaseModel
 {
 
     protected $fillable = [
@@ -13,4 +12,25 @@ class Customer extends Model
         'number',
     ];
 
+    
+    /**
+     * 
+     * Retorna columnas de busqueda para datatable
+     *
+     * @return array
+     */
+    public function getSearchColumns(): array
+    {
+        return [
+            [
+                'value' => 'name', 
+                'name' => 'Nombre'
+            ],
+            [
+                'value' => 'number', 
+                'name' => 'Número'
+            ],
+        ];
+    }
+    
 }

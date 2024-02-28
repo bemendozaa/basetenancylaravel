@@ -2,8 +2,7 @@
 
 namespace App\Services\Tenant;
 
-use App\Repositories\Tenant\CustomerRepositoryInterface;
-
+use App\Repositories\Tenant\Contracts\CustomerRepositoryInterface;
 
 class CustomerService
 {
@@ -22,9 +21,9 @@ class CustomerService
     }
 
 
-    public function getRecords()
+    public function getRecords(string $column, ?string $value)
     {
-        return $this->customerRepository->records();
+        return $this->customerRepository->getPaginateRecords($column, $value);
     }
 
 
@@ -37,6 +36,12 @@ class CustomerService
     public function destroyRecordById($id)
     {
         $this->customerRepository->destroyById($id);
+    }
+    
+
+    public function getSearchColumns()
+    {
+        return $this->customerRepository->getSearchColumns();
     }
 
 }

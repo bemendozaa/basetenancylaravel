@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
+use App\Repositories\Tenant\Contracts\CustomerRepositoryInterface;
+use App\Repositories\Tenant\Contracts\ItemRepositoryInterface;
 use App\Repositories\Tenant\CustomerRepository;
-use App\Repositories\Tenant\CustomerRepositoryInterface;
 use App\Repositories\Tenant\ItemRepository;
-use App\Repositories\Tenant\ItemRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
