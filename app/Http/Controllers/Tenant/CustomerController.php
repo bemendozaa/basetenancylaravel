@@ -50,7 +50,7 @@ class CustomerController extends Controller
 
             return [
                 'success' => true,
-                'message' => $request->id ? 'Producto actualizado correctamente.' : 'Producto creado correctamente.',
+                'message' => $request->id ? 'Cliente actualizado correctamente.' : 'Cliente creado correctamente.',
             ];
 
         }
