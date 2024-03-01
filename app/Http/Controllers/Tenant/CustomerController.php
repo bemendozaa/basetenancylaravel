@@ -73,7 +73,7 @@ class CustomerController extends Controller
 
             return [
                 'success' => true,
-                'message' => 'Producto eliminado',
+                'message' => 'Cliente eliminado',
             ];
         }
         catch(Exception $e) 

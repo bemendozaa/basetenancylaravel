@@ -61,6 +61,7 @@
                             class="mt-5"
                             :resource="resource"
                             :columns="4"
+                            :simple-data-table="true"
                         >
                             <template v-slot:head>
                                 <tr>
