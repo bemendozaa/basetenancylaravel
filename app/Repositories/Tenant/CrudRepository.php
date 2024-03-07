@@ -18,8 +18,10 @@ abstract class CrudRepository implements CrudRepositoryInterface
     }
 
     
-    public function getPaginateRecords(string $column, ?string $value) : LengthAwarePaginator
+    public function getPaginateRecords(string $column, ?string $value, ?int $items_per_page = null) : LengthAwarePaginator
     {   
+        if(!$items_per_page) $items_per_page = config('tenant.items_per_page');
+        
         $query = $this->model->query();
 
         if(!empty($value))
@@ -28,7 +30,8 @@ abstract class CrudRepository implements CrudRepositoryInterface
         }
 
 
-        return $query->latest()->paginate(config('tenant.items_per_page'));
+        return $query->latest()->paginate($items_per_page);
+        // return $query->latest()->paginate();
     }
 
 
